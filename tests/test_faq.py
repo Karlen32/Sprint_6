@@ -18,17 +18,19 @@ class TestFAQ:
     5. Проверяем, что открылся корректный ответ.
     """)
     @pytest.mark.parametrize("index", range(len(FAQ_DATA)))
-    def test_faq_questions_and_answers(driver, index):
-        
+    def test_faq_questions_and_answers(self, driver, index):
+
         page = HomePage(driver)
         page.open(URL)
 
         page.scroll_to_faq()
 
-        expected_question = FAQ_DATA[index]["question"]
-        expected_answer = FAQ_DATA[index]["answer"]
+        expected_q = FAQ_DATA[index]["question"]
 
-        page.click_question_by_text(expected_question)
+        expected_a = FAQ_DATA[index]["answer"]
+
+        page.click_question_by_text(expected_q)
+
         actual_answer = page.get_answer_by_index(index)
 
-        assert actual_answer == expected_answer
+        assert actual_answer == expected_a

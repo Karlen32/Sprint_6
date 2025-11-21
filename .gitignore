@@ -29,10 +29,8 @@ logs/
 screenshots/
 tmp/
 output/
-allure-results/
 allure-report/
 junit.xml
-
 chromedriver.log
 geckodriver.log
 

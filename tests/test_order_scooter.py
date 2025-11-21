@@ -25,15 +25,12 @@ class TestOrderScooter:
     9. Проверить, что отображаемый номер совпадает с полученным.
     """)
     @pytest.mark.parametrize("data", ORDER_DATA)
-    def test_order_full_positive(driver, data):
+    def test_order_scooter_positive(self, driver, data):
 
         home = HomePage(driver)
         home.open(URL)
-
-        # точка входа берётся из данных
         home.click_order_button(data["entry"])
 
-        # Шаг 1
         step1 = OrderStep1Page(driver)
         step1.fill_first_name(data["first_name"])
         step1.fill_last_name(data["last_name"])
@@ -42,8 +39,8 @@ class TestOrderScooter:
         step1.fill_phone(data["phone"])
         step1.click_next()
 
-        # Шаг 2
         step2 = OrderStep2Page(driver)
+
         step2.set_delivery_date(data["date"])
         step2.select_rental_period(data["period"])
         step2.select_color(data["color"])
@@ -52,7 +49,8 @@ class TestOrderScooter:
         step2.confirm_order()
 
         order_number = step2.get_order_number()
-        step2.go_to_status_page()
 
+        step2.go_to_status_page()
         status_page = OrderStatusPage(driver)
+
         assert status_page.get_track_number() == order_number
