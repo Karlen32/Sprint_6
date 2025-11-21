@@ -39,3 +39,23 @@ class BasePage:
 
     def get_current_url(self):
         return self.driver.current_url
+
+    def get_window_handles(self):
+        return self.driver.window_handles
+
+    def get_current_window(self):
+        return self.driver.current_window_handle
+
+    def switch_to_window(self, handle):
+        self.driver.switch_to.window(handle)
+
+    def wait_new_window_opened(self, old_handles):
+        self.wait.until(lambda d: len(d.window_handles) > len(old_handles))
+        new = [h for h in self.driver.window_handles if h not in old_handles]
+        return new[0]
+
+    def wait_url_to_be(self, url):
+        self.wait.until(EC.url_to_be(url))
+
+    def wait_url_contains(self, text):
+        self.wait.until(EC.url_contains(text))

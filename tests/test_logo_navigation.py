@@ -1,8 +1,5 @@
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 from pages.home_page import HomePage
 from config.urls import HOME_PAGE as URL
-from config.settings import SHORT_WAIT
 import allure
 
 
@@ -17,14 +14,12 @@ class TestLogoNavigation:
         page = HomePage(driver)
 
         page.open(URL)
-
         page.click_order_header_button()
-
         page.click_scooter_logo_button()
 
-        WebDriverWait(driver, SHORT_WAIT).until(EC.url_to_be(URL))
+        page.wait_url_to_be(URL)
 
-        assert driver.current_url == URL
+        assert page.get_current_url() == URL
         
 
     @allure.title("Переход по логотипу Яндекса → открывается Дзен в новом окне")
@@ -36,27 +31,23 @@ class TestLogoNavigation:
     5. Проверяем, что открыт Дзен.
     """)
     def test_click_yandex_logo_opens_dzen_in_new_tab(self, driver):
-        home = HomePage(driver)
-
         
+        home = HomePage(driver)
         home.open(URL)
 
-        main_window = driver.current_window_handle
-        old_windows = driver.window_handles
+        old_windows = home.get_window_handles()
 
-        
         home.click_yandex_logo_button()
 
-        
-        WebDriverWait(driver, SHORT_WAIT).until(
-                lambda d: len(d.window_handles) > len(old_windows)
-            )
-        new_tab = [w for w in driver.window_handles if w != main_window][0]
-        driver.switch_to.window(new_tab)
+        # ждём появления нового окна
+        new_window = home.wait_new_window_opened(old_windows)
 
-        
-        WebDriverWait(driver, SHORT_WAIT).until(EC.url_contains("dzen.ru"))
+        # переключаемся в новое окно
+        home.switch_to_window(new_window)
 
-        assert "dzen.ru" in driver.current_url
+        # ждём редирект на Дзен
+        home.wait_url_contains("dzen.ru")
+
+        assert "dzen.ru" in home.get_current_url()
 
     
