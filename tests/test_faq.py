@@ -5,32 +5,28 @@ from data.expected_texts import FAQ_DATA
 import allure
 
 
+@allure.feature("FAQ")
 class TestFAQ:
-    
-    @allure.title("FAQ: проверка отображения ответа по вопросу №{index}")
-    @allure.story("Проверка выпадения ответов по каждому вопросу из раздела FAQ")
-    @allure.description("""
-    Тест проверяет работу аккордеона FAQ:
-    1. Открываем главную страницу.
-    2. Находим нужный вопрос по его тексту.
-    3. Скроллим к нему.
-    4. Нажимаем на вопрос.
-    5. Проверяем, что открылся корректный ответ.
-    """)
+
     @pytest.mark.parametrize("index", range(len(FAQ_DATA)))
+    @allure.title("FAQ: проверка вопроса №{index}")
     def test_faq_questions_and_answers(self, driver, index):
 
-        page = HomePage(driver)
-        page.open(URL)
+        with allure.step("Открываем главную страницу"):
+            page = HomePage(driver)
+            page.open(URL)
 
-        page.scroll_to_faq()
+        with allure.step("Скроллим до секции FAQ"):
+            page.scroll_to_faq()
 
         expected_q = FAQ_DATA[index]["question"]
-
         expected_a = FAQ_DATA[index]["answer"]
 
-        page.click_question_by_text(expected_q)
+        with allure.step(f"Открываем вопрос: {expected_q}"):
+            page.click_question_by_text(expected_q)
 
-        actual_answer = page.get_answer_by_index(index)
+        with allure.step("Считываем ответ"):
+            actual_answer = page.get_answer_by_index(index)
 
-        assert actual_answer == expected_a
+        with allure.step("Проверяем соответствие ответа"):
+            assert actual_answer == expected_a
